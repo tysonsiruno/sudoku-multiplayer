@@ -1,0 +1,964 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* RESPONSIVENESS FIX: Prevent screen bounce and optimize touch handling */
+html, body {
+    overscroll-behavior: none; /* Prevent iOS bounce/rubber-band effect */
+    -webkit-overflow-scrolling: auto;
+    touch-action: manipulation; /* Faster touch response, no double-tap zoom */
+    position: fixed; /* Prevent scroll entirely on body */
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* No scrolling on body */
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    /* Fallback solid color for browsers that don't support gradients */
+    background-color: #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+#app {
+    width: 100%;
+    max-width: 100%; /* Allow full width for hard mode */
+    padding: 20px;
+    /* RESPONSIVENESS FIX: Allow scrolling within app container only */
+    overflow: auto; /* Allow both horizontal and vertical scrolling */
+    height: 100%;
+    -webkit-overflow-scrolling: touch;
+    /* RESPONSIVENESS FIX: Prevent bounce within app */
+    overscroll-behavior: contain;
+}
+
+/* Screen Management */
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    min-width: 400px;
+}
+
+@media (max-width: 600px) {
+    .container {
+        min-width: 90%;
+        padding: 20px;
+    }
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+h2 {
+    font-size: 1.8em;
+    margin-bottom: 15px;
+}
+
+/* Form Elements */
+.form-group {
+    margin: 20px 0;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+input[type="text"]:focus {
+    outline: 3px solid #667eea;
+}
+
+/* Buttons */
+.btn {
+    padding: 15px 30px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+    margin: 5px;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.25);
+    color: #333;
+    text-shadow: none;
+    font-weight: 700;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.4);
+    color: #222;
+}
+
+.btn-large {
+    width: 200px;
+    height: 60px;
+    font-size: 1.3em;
+}
+
+.btn-small {
+    padding: 10px 20px;
+    font-size: 0.9em;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    margin: 30px 0;
+}
+
+/* Status Messages */
+.status-message {
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    background: rgba(102, 126, 234, 0.3);
+}
+
+.error-message {
+    color: #ff6b6b;
+    padding: 10px;
+    margin: 10px 0;
+    min-height: 20px;
+}
+
+/* Game Mode Cards */
+.mode-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin: 30px 0;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .mode-cards {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+.mode-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(5px);
+    padding: 25px;
+    border-radius: 15px;
+    transition: all 0.3s;
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.mode-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.mode-card h2 {
+    margin-bottom: 15px;
+    font-size: 1.8em;
+}
+
+.mode-card p {
+    margin: 8px 0;
+    opacity: 0.9;
+    font-size: 0.95em;
+}
+
+.mode-card .btn {
+    margin-top: 15px;
+    width: 100%;
+    pointer-events: auto;
+    position: relative;
+    z-index: 10;
+}
+
+/* Color-coded difficulty levels */
+.mode-card[data-difficulty="easy"] h2 {
+    color: #2ecc71;
+}
+
+.mode-card[data-difficulty="medium"] h2 {
+    color: #f1c40f;
+}
+
+.mode-card[data-difficulty="hard"] h2 {
+    color: #e67e22;
+}
+
+.mode-card[data-difficulty="impossible"] h2 {
+    color: #e74c3c;
+}
+
+.mode-card[data-difficulty="hacker"] h2 {
+    color: #9b59b6;
+    text-shadow: 0 0 10px rgba(155, 89, 182, 0.5);
+}
+
+/* Color-coded board difficulty levels for Standard/Survival */
+.mode-card[data-board-difficulty="easy"] h2 {
+    color: #2ecc71;
+}
+
+.mode-card[data-board-difficulty="medium"] h2 {
+    color: #f1c40f;
+}
+
+.mode-card[data-board-difficulty="hard"] h2 {
+    color: #e67e22;
+}
+
+/* Room Info */
+.room-info {
+    background: rgba(102, 126, 234, 0.3);
+    padding: 20px;
+    border-radius: 15px;
+    margin: 20px 0;
+}
+
+.share-message {
+    font-size: 0.9em;
+    opacity: 0.8;
+    margin-top: 10px;
+}
+
+/* Players List */
+.players-list {
+    margin: 30px 0;
+    text-align: left;
+}
+
+.player-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.player-ready {
+    color: #51cf66;
+    font-weight: bold;
+}
+
+/* Game Screen */
+#game-screen.active {
+    display: block;
+    /* RESPONSIVENESS FIX: Prevent bounce during gameplay */
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
+    touch-action: pan-y; /* Allow vertical scrolling but no bounce */
+}
+
+.game-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    /* RESPONSIVENESS FIX: Prevent bounce on container */
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: auto;
+    max-width: 95vw; /* Don't overflow viewport */
+    width: 100%; /* Full width within constraints */
+    margin: 0 auto; /* Center the container */
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #667eea;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    color: white;
+    flex-wrap: wrap;
+}
+
+.game-info, .game-stats {
+    display: flex;
+    gap: 20px;
+    color: white;
+    font-weight: 600;
+}
+
+.game-info span, .game-stats span {
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.turn-indicator {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ffd43b;
+}
+
+.turn-indicator.time-critical {
+    color: #ff6b6b;
+    animation: flashRed 0.5s infinite;
+}
+
+@keyframes flashRed {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.game-content {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    width: 100%;
+    justify-content: center;
+}
+
+@media (max-width: 1200px) {
+    .game-content {
+        flex-direction: column;
+    }
+
+    .game-sidebar {
+        width: 100%;
+    }
+}
+
+.game-board-container {
+    flex: 0 1 auto; /* Don't grow, allow shrink, auto size */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    /* RESPONSIVENESS FIX: Prevent any bounce on canvas container */
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
+    touch-action: none; /* No gestures on canvas container */
+    padding: 10px;
+}
+
+#game-canvas {
+    border: 3px solid #667eea;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #ecf0f1;
+    transition: transform 0.1s ease;
+    /* RESPONSIVENESS FIX: Optimize canvas for touch interaction */
+    touch-action: none; /* Direct touch handling, no browser gestures */
+    user-select: none; /* Prevent text selection */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-tap-highlight-color: transparent; /* Remove iOS tap highlight */
+    -webkit-touch-callout: none; /* Disable iOS callout */
+}
+
+/* Canvas click effect removed - no more bounce!
+#game-canvas:active {
+    transform: scale(0.98);
+}
+*/
+
+.game-sidebar {
+    flex: 0 0 250px; /* Don't grow or shrink, fixed 250px */
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    min-width: 250px;
+}
+
+.game-sidebar h3 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.leaderboard {
+    margin: 20px 0;
+    text-align: left;
+}
+
+.leaderboard-entry {
+    padding: 10px;
+    margin: 5px 0;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    color: #333;
+}
+
+.game-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.game-controls .btn {
+    color: #333;
+    font-weight: 600;
+}
+
+.game-controls .btn-primary {
+    color: white;
+}
+
+.game-controls .btn-secondary {
+    background: rgba(102, 126, 234, 0.6);
+    color: white;
+}
+
+.game-controls .btn-secondary:hover {
+    background: rgba(102, 126, 234, 0.8);
+}
+
+/* Result Overlay */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.overlay.active {
+    display: flex;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.result-content {
+    background: white;
+    padding: 50px;
+    border-radius: 20px;
+    text-align: center;
+    color: #333;
+    max-width: 400px;
+    animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+#result-text {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+#result-emoji {
+    font-size: 5em;
+    margin: 20px 0;
+}
+
+#result-score {
+    font-size: 1.5em;
+    margin: 20px 0;
+    color: #667eea;
+}
+
+/* ============================================================================
+   AUTHENTICATION SCREENS
+   ============================================================================ */
+
+.auth-container {
+    max-width: 500px;
+    min-width: 400px;
+}
+
+@media (max-width: 600px) {
+    .auth-container {
+        min-width: 90%;
+    }
+}
+
+.auth-form {
+    text-align: left;
+}
+
+.auth-form h2 {
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+    font-size: 2em;
+}
+
+.auth-form p {
+    text-align: center;
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Form Fields */
+.form-group {
+    margin: 20px 0;
+}
+
+.form-group label {
+    display: block;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.form-group small {
+    display: block;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85em;
+    margin-top: 5px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 1em;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    transition: all 0.3s;
+    text-align: left;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.form-group input::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+/* Checkbox Group */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    cursor: pointer;
+    transform: scale(1.2);
+}
+
+.checkbox-group label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: 400;
+}
+
+/* Button Styles */
+.btn-block {
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Auth Links */
+.auth-links {
+    text-align: center;
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.auth-links a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-size: 0.95em;
+    transition: color 0.3s;
+}
+
+.auth-links a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+/* Guest Divider */
+.guest-divider {
+    text-align: center;
+    margin: 30px 0;
+    position: relative;
+    color: white;
+    font-weight: 600;
+}
+
+.guest-divider::before,
+.guest-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 42%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.guest-divider::before {
+    left: 0;
+}
+
+.guest-divider::after {
+    right: 0;
+}
+
+/* Message Styles */
+.success-message {
+    background: rgba(46, 204, 113, 0.2);
+    border: 2px solid #2ecc71;
+    color: #2ecc71;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    text-align: center;
+    font-weight: 600;
+    display: none;
+}
+
+.info-message {
+    background: rgba(52, 152, 219, 0.2);
+    border: 2px solid #3498db;
+    color: #3498db;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    text-align: center;
+    font-weight: 600;
+}
+
+.error-message {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+    border: 2px solid #ff6b6b;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 10px 0;
+    min-height: auto;
+    font-weight: 600;
+    text-align: center;
+    display: none;
+}
+
+.error-message:empty {
+    display: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* ============================================================================
+   PROFILE SCREEN
+   ============================================================================ */
+
+.profile-content {
+    text-align: left;
+    color: white;
+}
+
+.profile-section {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 25px;
+    border-radius: 15px;
+    margin: 20px 0;
+}
+
+.profile-section h3 {
+    color: white;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 10px;
+}
+
+.profile-field {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-field:last-child {
+    border-bottom: none;
+}
+
+.profile-field label {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.profile-field span {
+    color: white;
+    font-weight: 500;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.stat-value {
+    font-size: 2em;
+    font-weight: bold;
+    color: #ffd43b;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+/* ============================================================================
+   MAIN SCREEN (Welcome)
+   ============================================================================ */
+
+.welcome-message {
+    margin: 30px 0;
+    text-align: center;
+}
+
+.welcome-message h2 {
+    color: white;
+    font-size: 2em;
+    margin-bottom: 15px;
+}
+
+.main-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    margin: 30px 0;
+}
+
+.main-menu .btn {
+    width: 250px;
+}
+
+/* Verification Notice */
+.verification-notice {
+    background: rgba(241, 196, 15, 0.2);
+    border: 2px solid #f1c40f;
+    color: #f1c40f;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-weight: 600;
+    text-align: center;
+    display: none;
+}
+
+.guest-notice {
+    background: rgba(52, 152, 219, 0.2);
+    border: 2px solid #3498db;
+    color: #3498db;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-weight: 600;
+    text-align: center;
+    display: none;
+}
+
+/* ============================================================================
+   VISIBILITY HELPERS
+   ============================================================================ */
+
+.login-required {
+    /* Will be shown/hidden by auth.js based on login state */
+}
+
+.logout-button {
+    /* Will be shown/hidden by auth.js based on login state */
+}
+
+.username-display {
+    /* Will be populated by auth.js */
+    font-weight: 600;
+}
+
+/* ============================================================================
+   RESPONSIVE AUTH SCREENS
+   ============================================================================ */
+
+@media (max-width: 600px) {
+    /* BUG #481 FIX: Mobile gradient background not displaying */
+    html, body {
+        background-color: #667eea !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        background-size: 100% 100% !important;
+        background-repeat: no-repeat !important;
+        background-attachment: scroll !important;
+    }
+
+    /* BUG #239 FIX: Scale down large headings on mobile */
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .auth-form h2 {
+        font-size: 1.5em;
+    }
+
+    .form-group input {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .main-menu .btn {
+        width: 100%;
+    }
+
+    /* BUG #240 FIX: Mobile responsive game UI */
+    .mode-card h2 {
+        font-size: 1.5em;
+    }
+
+    .mode-card p {
+        font-size: 0.9em;
+    }
+
+    .game-header {
+        gap: 10px;
+    }
+
+    .game-info, .game-stats {
+        gap: 10px;
+        font-size: 0.85em;
+    }
+
+    .turn-indicator {
+        font-size: 1em;
+    }
+
+    .game-container {
+        padding: 15px;
+    }
+
+    .result-content {
+        padding: 30px 20px;
+        max-width: 90%;
+    }
+
+    #result-text {
+        font-size: 2em;
+    }
+
+    #result-emoji {
+        font-size: 3em;
+    }
+
+    #result-score {
+        font-size: 1.2em;
+    }
+}

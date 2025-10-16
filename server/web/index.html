@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Sudoku Multiplayer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="ux.css">
+    <style>
+        /* Sudoku-specific styles */
+        .number-pad {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            max-width: 400px;
+        }
+
+        .number-pad button {
+            padding: 15px;
+            font-size: 1.2em;
+            border: 2px solid #0066cc;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .number-pad button:hover {
+            background: #0066cc;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .number-pad button:active {
+            transform: scale(0.95);
+        }
+
+        #gameCanvas {
+            border: 3px solid #333;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .game-message {
+            padding: 10px 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .game-message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .game-message.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .game-message.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .game-message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .game-stats {
+            display: flex;
+            gap: 20px;
+            justify-content: space-around;
+            margin: 10px 0;
+        }
+
+        .stat-item {
+            padding: 10px 15px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        #gameResults {
+            display: none;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .results-list {
+            margin-top: 15px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            align-items: center;
+        }
+
+        .rank {
+            font-weight: bold;
+            font-size: 1.2em;
+            min-width: 30px;
+        }
+
+        .player-name {
+            flex: 1;
+            margin: 0 15px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Username Entry Screen -->
+        <div id="usernameScreen" class="screen active">
+            <div class="container">
+                <h1>🧩 SUDOKU MULTIPLAYER 🧩</h1>
+                <div class="form-group">
+                    <input type="text" id="usernameInput" placeholder="Enter your username"
+                           minlength="1" maxlength="20" autofocus>
+                    <button id="usernameSubmit" class="btn btn-primary">Start Playing</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Mode Selection -->
+        <div id="modeScreen" class="screen">
+            <div class="container">
+                <h1>Choose Game Mode</h1>
+                <div class="button-group">
+                    <button id="soloBtn" class="btn btn-large">Solo</button>
+                    <button id="multiplayerBtn" class="btn btn-large">Multiplayer</button>
+                </div>
+                <button id="backToUsername" class="btn btn-secondary">Change Username</button>
+            </div>
+        </div>
+
+        <!-- Multiplayer Lobby -->
+        <div id="lobbyScreen" class="screen">
+            <div class="container">
+                <h1>Multiplayer Lobby</h1>
+                <div id="connectionStatus" class="status-message">Connecting to server...</div>
+                <div class="button-group">
+                    <button id="createRoomBtn" class="btn btn-large">Create Room</button>
+                    <button id="joinRoomBtn" class="btn btn-large">Join Room</button>
+                </div>
+                <button id="backToMode" class="btn btn-secondary">Back</button>
+            </div>
+        </div>
+
+        <!-- Join Room -->
+        <div id="joinScreen" class="screen">
+            <div class="container">
+                <h1>Join Room</h1>
+                <div class="form-group">
+                    <input type="text" id="roomCodeInput" placeholder="Enter 6-digit room code"
+                           maxlength="6" pattern="[0-9]{6}" inputmode="numeric">
+                    <button id="joinSubmit" class="btn btn-primary">Join</button>
+                </div>
+                <div id="joinError" class="error-message"></div>
+                <button id="backToLobby" class="btn btn-secondary">Back</button>
+            </div>
+        </div>
+
+        <!-- Game Mode Selection -->
+        <div id="gameModeScreen" class="screen">
+            <div class="container">
+                <h1>Choose Game Mode</h1>
+                <div class="mode-cards">
+                    <div class="mode-card" data-mode="race">
+                        <h2>🏁 Race</h2>
+                        <p>Same puzzle, first to finish wins</p>
+                        <button class="btn btn-primary selectMode">Select</button>
+                    </div>
+                    <div class="mode-card" data-mode="collaborative">
+                        <h2>🤝 Collaborative</h2>
+                        <p>Work together on one board</p>
+                        <button class="btn btn-primary selectMode">Select</button>
+                    </div>
+                    <div class="mode-card" data-mode="turn_based">
+                        <h2>🔄 Turn-Based</h2>
+                        <p>Take turns placing numbers</p>
+                        <button class="btn btn-primary selectMode">Select</button>
+                    </div>
+                </div>
+                <button id="backToLobby2" class="btn btn-secondary">Back</button>
+            </div>
+        </div>
+
+        <!-- Difficulty Selection -->
+        <div id="difficultyScreen" class="screen">
+            <div class="container">
+                <h1>Choose Difficulty</h1>
+                <div class="mode-cards">
+                    <div class="mode-card" data-difficulty="Easy">
+                        <h2>Easy</h2>
+                        <p>40 clues</p>
+                        <button class="btn btn-primary selectDifficulty">Select</button>
+                    </div>
+                    <div class="mode-card" data-difficulty="Medium">
+                        <h2>Medium</h2>
+                        <p>30 clues</p>
+                        <button class="btn btn-primary selectDifficulty">Select</button>
+                    </div>
+                    <div class="mode-card" data-difficulty="Hard">
+                        <h2>Hard</h2>
+                        <p>25 clues</p>
+                        <button class="btn btn-primary selectDifficulty">Select</button>
+                    </div>
+                    <div class="mode-card" data-difficulty="Expert">
+                        <h2>Expert</h2>
+                        <p>22 clues</p>
+                        <button class="btn btn-primary selectDifficulty">Select</button>
+                    </div>
+                    <div class="mode-card" data-difficulty="Evil">
+                        <h2>Evil 😈</h2>
+                        <p>17 clues</p>
+                        <button class="btn btn-primary selectDifficulty">Select</button>
+                    </div>
+                </div>
+                <button id="backToGameMode" class="btn btn-secondary">Back</button>
+            </div>
+        </div>
+
+        <!-- Waiting Room -->
+        <div id="waitingRoom" class="screen">
+            <div class="container">
+                <h1>Waiting Room</h1>
+                <div id="roomInfo" class="room-info">
+                    <h2>Room Code: <span id="displayRoomCode"></span></h2>
+                    <p class="share-message">Share this code with friends!</p>
+                </div>
+                <div id="playersList" class="players-list"></div>
+                <button id="readyBtn" class="btn btn-primary">Ready</button>
+                <button id="leaveRoomBtn" class="btn btn-secondary">Leave Room</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen">
+            <div class="game-container">
+                <div class="game-header">
+                    <div class="game-info">
+                        <span id="usernameDisplay"></span>
+                        <span id="roomDisplay"></span>
+                    </div>
+                    <div id="gameMessage" class="game-message"></div>
+                </div>
+
+                <div class="game-content">
+                    <div class="game-board-container" style="text-align: center;">
+                        <div class="game-stats">
+                            <div class="stat-item">
+                                <span id="mistakesCount">Mistakes: 0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span id="hintsCount">Hints: 3</span>
+                            </div>
+                            <div class="stat-item">
+                                <span id="timerDisplay">Time: 0s</span>
+                            </div>
+                        </div>
+                        <canvas id="gameCanvas"></canvas>
+
+                        <!-- Number Pad -->
+                        <div class="number-pad">
+                            <button onclick="numberPadClick(1)">1</button>
+                            <button onclick="numberPadClick(2)">2</button>
+                            <button onclick="numberPadClick(3)">3</button>
+                            <button onclick="numberPadClick(4)">4</button>
+                            <button onclick="numberPadClick(5)">5</button>
+                            <button onclick="numberPadClick(6)">6</button>
+                            <button onclick="numberPadClick(7)">7</button>
+                            <button onclick="numberPadClick(8)">8</button>
+                            <button onclick="numberPadClick(9)">9</button>
+                            <button onclick="numberPadClick(0)">Clear</button>
+                        </div>
+
+                        <div class="game-controls">
+                            <button onclick="requestHint()" class="btn btn-small">💡 Hint</button>
+                            <button onclick="resetGame()" class="btn btn-small">New Game</button>
+                            <button id="backBtn" class="btn btn-small btn-secondary">Back</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="gameResults"></div>
+            </div>
+        </div>
+
+        <!-- Result Overlay -->
+        <div id="resultOverlay" class="overlay">
+            <div class="result-content">
+                <h1 id="resultText"></h1>
+                <div id="resultEmoji"></div>
+                <p id="resultScore"></p>
+                <button id="resultOkBtn" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js" crossorigin="anonymous"></script>
+    <script src="performance.js"></script>
+    <script src="ux.js"></script>
+    <script src="auth.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>

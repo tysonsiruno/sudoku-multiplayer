@@ -1,0 +1,35 @@
+# Development dependencies
+# BUG #481-490 FIX: Development tooling
+
+# Testing
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+pytest-flask==1.3.0
+pytest-asyncio==0.21.1
+
+# Code quality
+black==23.12.1
+flake8==6.1.0
+pylint==3.0.3
+isort==5.13.2
+mypy==1.7.1
+
+# Security
+safety==2.3.5
+bandit==1.7.5
+
+# Documentation
+sphinx==7.2.6
+sphinx-rtd-theme==2.0.0
+
+# Debugging
+ipdb==0.13.13
+ipython==8.18.1
+
+# Performance profiling
+memory-profiler==0.61.0
+line-profiler==4.1.1
+
+# Load testing
+locust==2.20.0

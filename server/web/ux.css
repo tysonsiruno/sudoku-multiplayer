@@ -1,0 +1,327 @@
+/**
+ * UX Improvements Styles
+ * Supports fixes #431-480
+ */
+
+/* ============================================================================
+   Error Dialog Styles
+   ============================================================================ */
+
+.error-dialog {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 15px;
+    max-width: 400px;
+    animation: slideIn 0.3s ease-out;
+}
+
+.error-dialog[data-severity="warning"] {
+    border-left: 4px solid #ff9800;
+}
+
+.error-dialog[data-severity="error"] {
+    border-left: 4px solid #f44336;
+}
+
+.error-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.error-content {
+    flex: 1;
+}
+
+.error-content h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.error-content p {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.error-content .suggestions {
+    margin: 8px 0 0 0;
+    padding-left: 20px;
+    font-size: 13px;
+    color: #888;
+}
+
+.error-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.error-actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    background: #4CAF50;
+    color: white;
+}
+
+.error-actions button:last-child {
+    background: #ddd;
+    color: #333;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ============================================================================
+   Loading States
+   ============================================================================ */
+
+.loading-spinner {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #4CAF50;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Skeleton screens */
+.leaderboard-skeleton {
+    padding: 20px;
+}
+
+.skeleton-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ddd;
+}
+
+.skeleton-text {
+    flex: 1;
+    height: 16px;
+    background: #ddd;
+    border-radius: 4px;
+}
+
+.skeleton-score {
+    width: 60px;
+    height: 16px;
+    background: #ddd;
+    border-radius: 4px;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Progress bar */
+.progress-container {
+    width: 100%;
+    background: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 4px;
+    background: #4CAF50;
+    transition: width 0.3s ease;
+}
+
+.progress-message {
+    text-align: center;
+    padding: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* ============================================================================
+   Mobile Optimizations
+   ============================================================================ */
+
+/* Touch target sizes */
+.btn,
+.cell,
+.menu-item {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 12px;
+}
+
+/* Prevent horizontal scroll */
+body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+/* Handle keyboard covering inputs */
+.input-container {
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+body.keyboard-visible .input-container {
+    transform: translateY(-200px);
+}
+
+/* Mobile-specific gestures */
+.game-board {
+    touch-action: manipulation; /* Prevent zoom on double-tap */
+}
+
+/* Responsive layout */
+@media (orientation: portrait) {
+    .game-container {
+        flex-direction: column;
+    }
+}
+
+@media (orientation: landscape) {
+    .game-container {
+        flex-direction: row;
+    }
+}
+
+/* ============================================================================
+   Accessibility
+   ============================================================================ */
+
+/* Screen reader only */
+.sr-only {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Focus indicators */
+*:focus {
+    outline: 3px solid #4CAF50;
+    outline-offset: 2px;
+}
+
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: 3px solid #4CAF50;
+    outline-offset: 2px;
+}
+
+/* High contrast colors */
+.high-contrast {
+    --bg-color: #000;
+    --text-color: #FFF;
+    --accent-color: #FF0;
+}
+
+.high-contrast .btn-primary {
+    background: #FF0 !important;
+    color: #000 !important;
+    border: 2px solid #FFF;
+}
+
+.high-contrast .cell {
+    border: 2px solid #FFF;
+}
+
+/* Reduced motion */
+.reduced-motion * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+}
+
+/* Skip navigation */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #000;
+    color: #fff;
+    padding: 8px;
+    text-decoration: none;
+    z-index: 100;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* ============================================================================
+   Responsive Design
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .error-dialog {
+        max-width: calc(100vw - 40px);
+    }
+
+    .btn,
+    .cell,
+    .menu-item {
+        min-width: 48px;
+        min-height: 48px;
+    }
+}
+
+@media (max-width: 480px) {
+    .error-dialog {
+        flex-direction: column;
+    }
+
+    .error-actions {
+        flex-direction: column;
+    }
+
+    .error-actions button {
+        width: 100%;
+    }
+}

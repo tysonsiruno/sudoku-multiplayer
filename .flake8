@@ -1,0 +1,26 @@
+# Flake8 configuration
+# BUG #491-495 FIX: Code quality standards
+
+[flake8]
+max-line-length = 127
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    .eggs,
+    *.egg,
+    build,
+    dist
+
+ignore =
+    # Line too long (handled by black)
+    E501,
+    # Line break before binary operator
+    W503,
+    # Line break after binary operator
+    W504
+
+per-file-ignores =
+    # Allow unused imports in __init__.py
+    __init__.py:F401

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- RESPONSIVENESS FIX: Better viewport - allow zoom for accessibility but prevent bounce -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Minesweeper Multiplayer</title>
+    <link rel="stylesheet" href="styles.css" onerror="console.error('Failed to load styles.css')">
+    <link rel="stylesheet" href="ux.css" onerror="console.error('Failed to load ux.css')">
+</head>
+<body>
+    <div id="app">
+        <!-- Username Entry Screen -->
+        <div id="username-screen" class="screen active">
+            <div class="container">
+                <h1>🎮 MINESWEEPER MULTIPLAYER 🎮</h1>
+                <div class="form-group">
+                    <input type="text" id="username-input" placeholder="Enter your username"
+                           minlength="1" maxlength="20" autofocus>
+                    <button id="username-submit" class="btn btn-primary">Start Playing</button>
+                </div>
+                <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.8;">
+                    💡 Tips: Try "random" for humble names, "random1" for epic combos!
+                </p>
+            </div>
+        </div>
+
+        <!-- Game Mode Selection -->
+        <div id="mode-screen" class="screen">
+            <div class="container">
+                <h1>Choose Game Mode</h1>
+                <div class="button-group">
+                    <button id="solo-btn" class="btn btn-large">Solo</button>
+                    <button id="multiplayer-btn" class="btn btn-large">Multiplayer</button>
+                </div>
+                <button id="back-to-username" class="btn btn-secondary">Change Username</button>
+            </div>
+        </div>
+
+        <!-- Multiplayer Lobby -->
+        <div id="lobby-screen" class="screen">
+            <div class="container">
+                <h1>Multiplayer Lobby</h1>
+                <div id="connection-status" class="status-message">Connecting to server...</div>
+                <div class="button-group">
+                    <button id="create-room-btn" class="btn btn-large">Create Room</button>
+                    <button id="join-room-btn" class="btn btn-large">Join Room</button>
+                </div>
+                <button id="back-to-mode" class="btn btn-secondary">Back</button>
+            </div>
+        </div>
+
+        <!-- Join Room -->
+        <div id="join-screen" class="screen">
+            <div class="container">
+                <h1>Join Room</h1>
+                <div class="form-group">
+                    <input type="text" id="room-code-input" placeholder="Enter 6-digit room code"
+                           maxlength="6" pattern="[0-9]{6}" inputmode="numeric">
+                    <button id="join-submit" class="btn btn-primary">Join</button>
+                </div>
+                <div id="join-error" class="error-message"></div>
+                <button id="back-to-lobby" class="btn btn-secondary">Back</button>
+            </div>
+        </div>
+
+        <!-- Game Mode Selection for Room Creation -->
+        <div id="gamemode-screen" class="screen">
+            <div class="container">
+                <h1>Choose Game Mode</h1>
+                <div class="mode-cards">
+                    <div class="mode-card" data-mode="standard">
+                        <h2>Standard</h2>
+                        <p>Classic minesweeper rules</p>
+                        <p>Clear all safe tiles to win!</p>
+                        <button class="btn btn-primary select-mode">Select</button>
+                    </div>
+                    <div class="mode-card" data-mode="luck">
+                        <h2>Russian Roulette</h2>
+                        <p>Turn-based gameplay</p>
+                        <p>One click per turn</p>
+                        <p>No numbers shown!</p>
+                        <button class="btn btn-primary select-mode">Select</button>
+                    </div>
+                    <div class="mode-card" data-mode="timebomb">
+                        <h2>⏰ Time Bomb</h2>
+                        <p>Race against time!</p>
+                        <p>Gain time per tile!</p>
+                        <p>Don't let timer hit 0!</p>
+                        <button class="btn btn-primary select-mode">Select</button>
+                    </div>
+                    <div class="mode-card" data-mode="survival">
+                        <h2>🏃 Survival</h2>
+                        <p>Endless challenge!</p>
+                        <p>Board refills with mines</p>
+                        <p>How far can you go?</p>
+                        <button class="btn btn-primary select-mode">Select</button>
+                    </div>
+                    <div class="mode-card" data-mode="fogofwar">
+                        <h2>🌫️ Fog of War</h2>
+                        <p>Limited vision!</p>
+                        <p>Remember what you saw</p>
+                        <p>Fog fades memory away!</p>
+                        <button class="btn btn-primary select-mode">Select</button>
+                    </div>
+                    <div class="mode-card" data-mode="sabotage">
+                        <h2>⚡ Sabotage</h2>
+                        <p>Collect power-ups!</p>
+                        <p>Use strategic abilities</p>
+                        <p>Chaos and combos!</p>
+                        <button class="btn btn-primary select-mode">Select</button>
+                    </div>
+                    <div class="mode-card" data-mode="speedchess">
+                        <h2>⏱️ Speed Chess</h2>
+                        <p>Chess clock timer!</p>
+                        <p>Your move, their time</p>
+                        <p>Intense time pressure!</p>
+                        <button class="btn btn-primary select-mode">Select</button>
+                    </div>
+                </div>
+                <button id="back-to-lobby2" class="btn btn-secondary">Back</button>
+            </div>
+        </div>
+
+        <!-- Time Bomb Difficulty Selection -->
+        <div id="timebomb-difficulty-screen" class="screen">
+            <div class="container">
+                <h1>⏰ Time Bomb - Choose Difficulty</h1>
+                <div class="mode-cards">
+                    <div class="mode-card" data-difficulty="easy">
+                        <h2>Easy</h2>
+                        <p>90 seconds start time</p>
+                        <p>+1.0s per tile</p>
+                        <button class="btn btn-primary select-difficulty">Select</button>
+                    </div>
+                    <div class="mode-card" data-difficulty="medium">
+                        <h2>Medium</h2>
+                        <p>60 seconds start time</p>
+                        <p>+0.5s per tile</p>
+                        <button class="btn btn-primary select-difficulty">Select</button>
+                    </div>
+                    <div class="mode-card" data-difficulty="hard">
+                        <h2>Hard</h2>
+                        <p>45 seconds start time</p>
+                        <p>+0.2s per tile</p>
+                        <button class="btn btn-primary select-difficulty">Select</button>
+                    </div>
+                    <div class="mode-card" data-difficulty="impossible">
+                        <h2>Impossible</h2>
+                        <p>30 seconds start time</p>
+                        <p>+0.05s per tile</p>
+                        <button class="btn btn-primary select-difficulty">Select</button>
+                    </div>
+                    <div class="mode-card" data-difficulty="hacker">
+                        <h2>🔥 Hacker</h2>
+                        <p>20 seconds start time</p>
+                        <p>+0.01s per tile</p>
+                        <button class="btn btn-primary select-difficulty">Select</button>
+                    </div>
+                </div>
+                <button id="back-to-gamemode" class="btn btn-secondary">Back</button>
+            </div>
+        </div>
+
+        <!-- Board Difficulty Selection for Standard/Survival Modes -->
+        <div id="board-difficulty-screen" class="screen">
+            <div class="container">
+                <h1 id="board-difficulty-title">Choose Difficulty</h1>
+                <div class="mode-cards">
+                    <div class="mode-card" data-board-difficulty="easy">
+                        <h2>Easy</h2>
+                        <p>9x9 grid</p>
+                        <p>10 mines</p>
+                        <p>Perfect for beginners!</p>
+                        <button class="btn btn-primary select-board-difficulty">Select</button>
+                    </div>
+                    <div class="mode-card" data-board-difficulty="medium">
+                        <h2>Medium</h2>
+                        <p>16x16 grid</p>
+                        <p>40 mines</p>
+                        <p>Classic challenge!</p>
+                        <button class="btn btn-primary select-board-difficulty">Select</button>
+                    </div>
+                    <div class="mode-card" data-board-difficulty="hard">
+                        <h2>Hard</h2>
+                        <p>16x30 grid</p>
+                        <p>99 mines</p>
+                        <p>Expert level!</p>
+                        <button class="btn btn-primary select-board-difficulty">Select</button>
+                    </div>
+                </div>
+                <button id="back-to-gamemode2" class="btn btn-secondary">Back</button>
+            </div>
+        </div>
+
+        <!-- Speed Chess Difficulty Selection -->
+        <div id="speedchess-difficulty-screen" class="screen">
+            <div class="container">
+                <h1>⏱️ Speed Chess - Choose Timer</h1>
+                <div class="mode-cards">
+                    <div class="mode-card" data-difficulty="bullet">
+                        <h2>⚡ Bullet</h2>
+                        <p>30 seconds each</p>
+                        <p>Ultra-fast chaos!</p>
+                        <button class="btn btn-primary select-difficulty">Select</button>
+                    </div>
+                    <div class="mode-card" data-difficulty="blitz">
+                        <h2>🔥 Blitz</h2>
+                        <p>1 minute each</p>
+                        <p>Fast-paced action!</p>
+                        <button class="btn btn-primary select-difficulty">Select</button>
+                    </div>
+                    <div class="mode-card" data-difficulty="rapid">
+                        <h2>⏰ Rapid</h2>
+                        <p>3 minutes each</p>
+                        <p>Standard time control</p>
+                        <button class="btn btn-primary select-difficulty">Select</button>
+                    </div>
+                    <div class="mode-card" data-difficulty="marathon">
+                        <h2>🏃 Marathon</h2>
+                        <p>5 minutes each</p>
+                        <p>Plenty of time!</p>
+                        <button class="btn btn-primary select-difficulty">Select</button>
+                    </div>
+                </div>
+                <button id="back-to-gamemode3" class="btn btn-secondary">Back</button>
+            </div>
+        </div>
+
+        <!-- Waiting Room -->
+        <div id="waiting-screen" class="screen">
+            <div class="container">
+                <h1>Waiting Room</h1>
+                <div id="room-info" class="room-info">
+                    <h2>Room Code: <span id="display-room-code"></span></h2>
+                    <p class="share-message">Share this code with friends!</p>
+                </div>
+                <div id="players-list" class="players-list"></div>
+                <button id="ready-btn" class="btn btn-primary">Ready</button>
+                <button id="leave-room-btn" class="btn btn-secondary">Leave Room</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="game-container">
+                <div class="game-header">
+                    <div class="game-info">
+                        <span id="username-display"></span>
+                        <span id="room-display"></span>
+                    </div>
+                    <div id="turn-indicator" class="turn-indicator"></div>
+                    <div class="game-stats">
+                        <span id="mines-left">Mines: 0</span>
+                        <span id="timer">Time: 0s</span>
+                        <span id="hints-left">Hints: 3</span>
+                    </div>
+                </div>
+
+                <div class="game-content">
+                    <div class="game-board-container">
+                        <canvas id="game-canvas"></canvas>
+                    </div>
+
+                    <div class="game-sidebar">
+                        <!-- Sabotage Power-Up Bar -->
+                        <div id="powerup-bar" class="powerup-bar" style="display: none;">
+                            <h3>⚡ Power-Ups (1-5)</h3>
+                            <div id="powerup-slots" class="powerup-slots"></div>
+                        </div>
+
+                        <h3 id="leaderboard-title">Leaderboard</h3>
+                        <div id="leaderboard" class="leaderboard"></div>
+
+                        <div class="game-controls">
+                            <button id="hint-btn" class="btn btn-small">Hint (H)</button>
+                            <button id="clear-btn" class="btn btn-small">Clear Flags</button>
+                            <button id="set-score-btn" class="btn btn-small" style="display: none;">Set Score</button>
+                            <button id="new-game-btn" class="btn btn-small">New Game</button>
+                            <button id="mute-btn" class="btn btn-small">🔊 Sound</button>
+                            <button id="back-btn" class="btn btn-small btn-secondary">Back</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Result Overlay -->
+        <div id="result-overlay" class="overlay">
+            <div class="result-content">
+                <h1 id="result-text"></h1>
+                <div id="result-emoji"></div>
+                <p id="result-score"></p>
+                <button id="result-ok-btn" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+
+        <!-- Keyboard Shortcuts Help Overlay -->
+        <div id="shortcuts-overlay" class="overlay">
+            <div class="result-content">
+                <h1>⌨️ Keyboard Shortcuts</h1>
+                <div style="text-align: left; margin: 20px; line-height: 2;">
+                    <div><strong>H</strong> - Use hint</div>
+                    <div><strong>?</strong> - Show/hide this help</div>
+                    <div><strong>ESC</strong> - Close overlays</div>
+                    <div><strong>Enter</strong> - Submit forms</div>
+                    <div><strong>Left Click</strong> - Reveal cell</div>
+                    <div><strong>Right Click</strong> - Flag mine</div>
+                    <div><strong>Long Press (Mobile)</strong> - Flag mine</div>
+                    <div><strong>Quick Tap (Mobile)</strong> - Reveal cell</div>
+                </div>
+                <button id="shortcuts-ok-btn" class="btn btn-primary">Got it!</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"
+            crossorigin="anonymous"
+            onerror="console.error('Failed to load Socket.IO')"></script>
+    <script src="performance.js" onerror="console.error('Failed to load performance.js')"></script>
+    <script src="ux.js" onerror="console.error('Failed to load ux.js')"></script>
+    <script src="auth.js" onerror="console.error('Failed to load auth.js')"></script>
+    <script src="game.js" onerror="console.error('Failed to load game.js')"></script>
+</body>
+</html>
