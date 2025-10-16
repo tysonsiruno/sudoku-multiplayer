@@ -323,10 +323,9 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 ---
 
-## 👥 Authors
+## 👥 Author
 
 - **Tyson Siruno** - [GitHub](https://github.com/tysonsiruno)
-- **Built with Claude Code (Sonnet 4.5)** - [Anthropic](https://claude.com/claude-code)
 
 ---
 
@@ -335,5 +334,3 @@ MIT License - see [LICENSE](LICENSE) file for details
 **Built with ❤️ using Flask, PostgreSQL, Redis, and Socket.IO**
 
 **Last Updated: 2025-10-16**
-
-🤖 **Generated with [Claude Code](https://claude.com/claude-code)**
