@@ -1,6 +1,6 @@
 # 🚂 Railway Deployment Guide
 
-This guide will help you deploy your Minesweeper Multiplayer game to Railway.
+This guide will help you deploy your Sudoku Multiplayer game to Railway.
 
 ## 🎯 Quick Start
 
@@ -8,7 +8,7 @@ This guide will help you deploy your Minesweeper Multiplayer game to Railway.
    - Go to [railway.app](https://railway.app)
    - Sign in with GitHub
    - Click "New Project" → "Deploy from GitHub repo"
-   - Select `tysonsiruno/minesweeper-multiplayer`
+   - Select `tysonsiruno/sudoku-multiplayer`
 
 2. **Add PostgreSQL Database**
    - In your Railway project, click "+ New"
@@ -98,14 +98,14 @@ cmd = ". /opt/venv/bin/activate && cd server && gunicorn --worker-class eventlet
 
 ### 1. Test Homepage
 - Visit your Railway URL
-- You should see the purple gradient background with "MINESWEEPER MULTIPLAYER" title
+- You should see the game interface with "SUDOKU MULTIPLAYER" title
 - Enter a username and click "Start Playing"
 
 ### 2. Test Solo Mode
 - Choose "Solo" mode
-- Select a game mode (Standard/Time Bomb/Survival)
-- Choose difficulty
-- Game should load and be playable
+- Select difficulty level (Easy/Medium/Hard)
+- Game should load with a generated Sudoku puzzle
+- Numbers should be fillable and validated
 
 ### 3. Test Multiplayer Mode
 - Choose "Multiplayer" mode
@@ -122,7 +122,7 @@ cmd = ". /opt/venv/bin/activate && cd server && gunicorn --worker-class eventlet
   - Text is readable
   - Buttons are properly sized
   - Game board is scrollable
-  - Touch controls work (tap to reveal, long-press to flag)
+  - Touch controls work (tap to select cell, number input)
 
 ## 🐛 Troubleshooting
 
@@ -213,7 +213,7 @@ Before going to production:
 
 ## 🎉 Success!
 
-Your Minesweeper Multiplayer game should now be live on Railway!
+Your Sudoku Multiplayer game should now be live on Railway!
 
 Share the URL with friends and enjoy playing together! 🎮
 
